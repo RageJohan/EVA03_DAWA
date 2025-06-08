@@ -12,7 +12,7 @@ export default function EditLaboratorio({ params }: { params: { id: string } }) 
       .then(setLab)
   }, [params.id])
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     await fetch(`/api/laboratorio/${params.id}`, {
       method: 'PUT',

@@ -6,7 +6,7 @@ export default function NewLaboratorio() {
   const router = useRouter()
   const [form, setForm] = useState({ RazonSocial: '', Ruc: '', Direccion: '', Contacto: '', Telefono: '', Email: '' })
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     await fetch('/api/laboratorio', {
       method: 'POST',

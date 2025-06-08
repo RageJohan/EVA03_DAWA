@@ -6,7 +6,7 @@ export default function NewOrden() {
   const router = useRouter()
   const [form, setForm] = useState({ FechaEmision: '', Situacion: '', Total: '', CodLab: '' })
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     await fetch('/api/orden', {
       method: 'POST',

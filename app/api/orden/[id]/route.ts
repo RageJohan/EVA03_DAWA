@@ -14,6 +14,7 @@ export async function PUT(req: Request, { params }: Params) {
     });
     return NextResponse.json(ordenActualizada);
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: 'Error al actualizar orden de compra' }, { status: 500 });
   }
 }
@@ -25,6 +26,7 @@ export async function DELETE(req: Request, { params }: Params) {
     });
     return NextResponse.json({ message: 'Orden eliminada correctamente' });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: 'Error al eliminar orden de compra' }, { status: 500 });
   }
 }

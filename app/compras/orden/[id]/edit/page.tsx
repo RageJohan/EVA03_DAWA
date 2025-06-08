@@ -12,7 +12,7 @@ export default function EditOrden({ params }: { params: { id: string } }) {
       .then(setOrden)
   }, [params.id])
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     await fetch(`/api/orden/${params.id}`, {
       method: 'PUT',

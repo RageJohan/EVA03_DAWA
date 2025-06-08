@@ -8,6 +8,7 @@ export async function GET() {
     });
     return NextResponse.json(ordenes);
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: 'Error al obtener órdenes de compra' }, { status: 500 });
   }
 }
@@ -20,7 +21,7 @@ export async function POST(req: Request) {
     });
     return NextResponse.json(nuevaOrden);
   } catch (error) {
-    console.error('Error creando orden:', error);
+    console.error(error);
     return NextResponse.json({ error: 'Error al crear orden de compra' }, { status: 500 });
   }
 }
