@@ -1,3 +1,8 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
+
 type Laboratorio = {
   CodLab: number;
   RazonSocial: string;
@@ -8,26 +13,50 @@ type Laboratorio = {
   Email: string;
 };
 
-export default async function EditLaboratorio({ params }: { params: { id: string } }) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/laboratorio/${params.id}`, {
-    cache: 'no-store' // <- para evitar caché y mostrar datos actualizados
-  });
+export default function EditLaboratorio() {
+  const { id } = useParams(); // ✅ usamos useParams para obtener id
+  const [lab, setLab] = useState<Laboratorio | null>(null);
+  const router = useRouter();
 
-  if (!res.ok) {
-    return <div className="p-4 text-red-500">Error al cargar el laboratorio</div>;
-  }
+  useEffect(() => {
+    if (!id) return;
 
-  const lab: Laboratorio = await res.json();
+    fetch(`/api/laboratorio/${id}`)
+      .then((res) => res.json())
+      .then(setLab);
+  }, [id]);
+
+  const handleChange = (field: keyof Laboratorio, value: string) => {
+    if (!lab) return;
+    setLab({ ...lab, [field]: value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await fetch(`/api/laboratorio/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(lab),
+    });
+    router.push('/compras/laboratorio');
+  };
+
+  if (!lab) return <p>Cargando...</p>;
 
   return (
-    <div className="p-4">
+    <form onSubmit={handleSubmit} className="p-4">
       <h1 className="text-xl font-bold mb-4">Editar Laboratorio</h1>
-      <p><strong>Razón Social:</strong> {lab.RazonSocial}</p>
-      <p><strong>RUC:</strong> {lab.Ruc}</p>
-      <p><strong>Dirección:</strong> {lab.Direccion}</p>
-      <p><strong>Contacto:</strong> {lab.Contacto}</p>
-      <p><strong>Teléfono:</strong> {lab.Telefono}</p>
-      <p><strong>Email:</strong> {lab.Email}</p>
-    </div>
+      {(['RazonSocial', 'Ruc', 'Direccion', 'Contacto', 'Telefono', 'Email'] as (keyof Laboratorio)[]).map((field) => (
+        <input
+          key={field}
+          type="text"
+          value={lab[field]}
+          onChange={(e) => handleChange(field, e.target.value)}
+          className="block border p-2 my-2 w-full"
+          placeholder={field}
+        />
+      ))}
+      <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded">Actualizar</button>
+    </form>
   );
 }
