@@ -1,6 +1,7 @@
 'use client'
+
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 
 type OrdenCompraForm = {
   FechaEmision: string;
@@ -9,15 +10,19 @@ type OrdenCompraForm = {
   CodLab: number | string;
 };
 
-export default function EditOrden({ params }: { params: { id: string } }) {
-  const [orden, setOrden] = useState<OrdenCompraForm | null>(null)
+export default function EditOrden() {
   const router = useRouter()
+  const params = useParams()
+  const id = params?.id as string // asegúrate de que sea string
+
+  const [orden, setOrden] = useState<OrdenCompraForm | null>(null)
 
   useEffect(() => {
-    fetch(`/api/orden/${params.id}`)
+    if (!id) return
+
+    fetch(`/api/orden/${id}`)
       .then(res => res.json())
       .then(data => {
-        // Convertir FechaEmision a string tipo yyyy-mm-dd para input date
         setOrden({
           FechaEmision: data.FechaEmision ? data.FechaEmision.substring(0, 10) : '',
           Situacion: data.Situacion,
@@ -25,17 +30,15 @@ export default function EditOrden({ params }: { params: { id: string } }) {
           CodLab: data.CodLab
         })
       })
-  }, [params.id])
+  }, [id])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!orden) return
 
-    await fetch(`/api/orden/${params.id}`, {
+    await fetch(`/api/orden/${id}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         FechaEmision: new Date(orden.FechaEmision).toISOString(),
         Situacion: orden.Situacion,
@@ -43,6 +46,7 @@ export default function EditOrden({ params }: { params: { id: string } }) {
         CodLab: parseInt(orden.CodLab.toString())
       })
     })
+
     router.push('/compras/orden')
   }
 
