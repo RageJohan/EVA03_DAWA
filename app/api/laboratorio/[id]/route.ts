@@ -9,30 +9,30 @@ function getIdFromUrl(request: Request): number {
 
 export async function GET(request: Request) {
   const id = getIdFromUrl(request)
-  const orden = await prisma.ordenCompra.findUnique({
-    where: { NumOrden: id },
+  const lab = await prisma.laboratorio.findUnique({
+    where: { CodLab: id },
   })
 
-  if (!orden) {
-    return NextResponse.json({ error: 'Orden no encontrada' }, { status: 404 })
+  if (!lab) {
+    return NextResponse.json({ error: 'Laboratorio no encontrado' }, { status: 404 })
   }
 
-  return NextResponse.json(orden)
+  return NextResponse.json(lab)
 }
 
 export async function PUT(request: Request) {
   const id = getIdFromUrl(request)
   const data = await request.json()
-  const orden = await prisma.ordenCompra.update({
-    where: { NumOrden: id },
+  const lab = await prisma.laboratorio.update({
+    where: { CodLab: id },
     data,
   })
 
-  return NextResponse.json(orden)
+  return NextResponse.json(lab)
 }
 
 export async function DELETE(request: Request) {
   const id = getIdFromUrl(request)
-  await prisma.ordenCompra.delete({ where: { NumOrden: id } })
+  await prisma.laboratorio.delete({ where: { CodLab: id } })
   return NextResponse.json({ status: 'deleted' })
 }
