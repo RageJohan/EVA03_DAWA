@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql" // o sqlite
+  url      = env("DATABASE_URL")
+}
+
+model Laboratorio {
+  CodLab       Int           @id @default(autoincrement())
+  RazonSocial  String
+  Ruc          String
+  Direccion    String
+  Contacto     String
+  Telefono     String
+  Email        String
+  ordenes      OrdenCompra[]
+}
+
+model OrdenCompra {
+  NumOrden     Int      @id @default(autoincrement())
+  FechaEmision DateTime
+  Situacion    String
+  Total        Float
+  CodLab       Int
+  laboratorio  Laboratorio @relation(fields: [CodLab], references: [CodLab])
+}
